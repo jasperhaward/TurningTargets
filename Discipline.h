@@ -4,9 +4,9 @@
 
 class Discipline {
   private:
-    int* _intervals;
-    int _intervalIndex;
-    unsigned long _nextIntervalMillis;
+    int* intervals;
+    int intervalIndex;
+    unsigned long nextIntervalMillis;
 
   public:
     bool isActive;

@@ -3,11 +3,11 @@
 
 class Stepper {
   private:
-    int _direction;
-    int _directionPin;
-    int _pulsePin;
-    int _pulseDuration;
-    int _stepsPerRevolution;
+    int direction;
+    int directionPin;
+    int pulsePin;
+    int pulseDuration;
+    int stepsPerRevolution;
     void setDirection(int direction);
 
   public:

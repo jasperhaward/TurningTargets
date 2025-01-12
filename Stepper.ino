@@ -4,44 +4,44 @@
 const int CLOCKWISE = 0;
 const int COUNTER_CLOCKWISE = 1;
 
-void Stepper::setDirection(int direction) {
-  _direction = direction;
-  digitalWrite(_directionPin, direction);
+void Stepper::setDirection(int _direction) {
+  direction = _direction;
+  digitalWrite(directionPin, _direction);
 }
 
-Stepper::Stepper(int directionPin, int pulsePin, int pulseDuration, int stepsPerRevolution) {
-  _directionPin = directionPin;
-  _pulsePin = pulsePin;
-  _pulseDuration = pulseDuration;
-  _stepsPerRevolution = stepsPerRevolution;
+Stepper::Stepper(int _directionPin, int _pulsePin, int _pulseDuration, int _stepsPerRevolution) {
+  directionPin = _directionPin;
+  pulsePin = _pulsePin;
+  pulseDuration = _pulseDuration;
+  stepsPerRevolution = _stepsPerRevolution;
 }
 
 void Stepper::setup() {
-  pinMode(_pulsePin, OUTPUT);
-  pinMode(_directionPin, OUTPUT);
+  pinMode(pulsePin, OUTPUT);
+  pinMode(directionPin, OUTPUT);
 
   Stepper::setDirection(CLOCKWISE);
 }
 
 void Stepper::toggle() {
-  if (_direction == CLOCKWISE) {
+  if (direction == CLOCKWISE) {
     Stepper::setDirection(COUNTER_CLOCKWISE);
   } else {
     Stepper::setDirection(CLOCKWISE);
   }
 
-  // _stepsPerRevolution / 2 as we only want the stepper to turn 180 degrees
-  for (int i = 0; i < _stepsPerRevolution / 2; i++) {
-    digitalWrite(_pulsePin, HIGH);
-    delayMicroseconds(_pulseDuration);
-    digitalWrite(_pulsePin, LOW);
-    delayMicroseconds(_pulseDuration);
+  // stepsPerRevolution / 2 as we only want the stepper to turn 180 degrees
+  for (int i = 0; i < stepsPerRevolution / 2; i++) {
+    digitalWrite(pulsePin, HIGH);
+    delayMicroseconds(pulseDuration);
+    digitalWrite(pulsePin, LOW);
+    delayMicroseconds(pulseDuration);
   }
 }
 
 void Stepper::reset() {
   // move stepper to start position & clockwise
-  if (_direction == COUNTER_CLOCKWISE) {
+  if (direction == COUNTER_CLOCKWISE) {
     Stepper::toggle();
   } 
 }

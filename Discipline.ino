@@ -1,14 +1,14 @@
 #include "Discipline.h"
 
-Discipline::Discipline(int* intervals) {
+Discipline::Discipline(int* _intervals) {
   isActive = false;
-  _intervals = intervals;
+  intervals = _intervals;
 }
 
 void Discipline::start() {
   isActive = true;
-  _intervalIndex = 0;
-  _nextIntervalMillis = millis() + _intervals[0] * 1000;
+  intervalIndex = 0;
+  nextIntervalMillis = millis() + intervals[0] * 1000;
 }
 
 void Discipline::stop() {
@@ -16,17 +16,17 @@ void Discipline::stop() {
 }
 
 bool Discipline::hasIntervalPassed() {
-  return isActive && millis() >= _nextIntervalMillis;
+  return isActive && millis() >= nextIntervalMillis;
 }
 
 void Discipline::beginNextInterval() {
-  int nextInterval = _intervals[_intervalIndex + 1];
+  int nextInterval = intervals[intervalIndex + 1];
 
   // the last interval in a discipline's sequence is -1
   if (nextInterval == -1) {
     Discipline::stop();
   } else {
-    _nextIntervalMillis = millis() + nextInterval * 1000;
-    _intervalIndex++;
+    nextIntervalMillis = millis() + nextInterval * 1000;
+    intervalIndex++;
   }
 }
