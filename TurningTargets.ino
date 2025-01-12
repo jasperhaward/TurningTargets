@@ -5,9 +5,9 @@
 
 const int START_STOP_LED_PIN = 5;
 
-int rapidIntervals[] = { 2, 3, 2, 3, 2, 0, 0, 0, 0, 0 };
-int mediumIntervals[] = { 3, 4, 3, 0, 0, 0, 0, 0, 0, 0 };
-int slowIntervals[] = { 5, 4, 5, 4, 5, 0, 0, 0, 0, 0 };
+int rapidIntervals[] = { 2, 3, 2, 3, 2, -1 };
+int mediumIntervals[] = { 3, 4, 3, -1 };
+int slowIntervals[] = { 5, 4, 5, 4, 5, -1 };
 
 ezButton button(6);
 Stepper stepper(8, 7, 800, 400);

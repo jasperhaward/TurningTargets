@@ -22,7 +22,8 @@ bool Discipline::hasIntervalPassed() {
 void Discipline::beginNextInterval() {
   int nextInterval = _intervals[_intervalIndex + 1];
 
-  if (nextInterval == 0) {
+  // the last interval in a discipline's sequence is -1
+  if (nextInterval == -1) {
     Discipline::stop();
   } else {
     _nextIntervalMillis = millis() + nextInterval * 1000;
