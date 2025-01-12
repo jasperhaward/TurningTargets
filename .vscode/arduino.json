@@ -1,0 +1,5 @@
+{
+    "sketch": "TurningTargets.ino",
+    "board": "arduino:avr:uno",
+    "port": "COM3"
+}
