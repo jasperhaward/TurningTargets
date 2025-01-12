@@ -1,0 +1,17 @@
+{
+  "name": "turning-targets",
+  "author": "Jasper Haward (https://github.com/jasperhaward)",
+  "description": "Web client for the RMRPC turning targets project.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.9.4",
+    "preact": "^10.25.4",
+    "sass": "^1.83.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  }
+}
