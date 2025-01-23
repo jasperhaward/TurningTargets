@@ -1,12 +1,19 @@
-.brand {
+.header {
   display: flex;
   align-items: center;
 
-  h1 {
-    font-weight: 500;
-  }
-
   img {
-    margin-right: var(--padding-sm);
+    height: 60px;
+    margin-right: var(--padding-md);
   }
+}
+
+.disciplines {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.toggle {
+  margin-left: var(--padding-xl);
+  margin-right: var(--padding-xl);
 }

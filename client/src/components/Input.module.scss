@@ -1,0 +1,36 @@
+.input {
+  display: flex;
+  align-items: center;
+  margin-top: var(--padding-lg);
+  margin-bottom: var(--padding-sm);
+  padding: var(--padding-sm) var(--padding-md);
+  border-color: var(--grey-dark);
+  border-width: 1px;
+  border-radius: var(--border-radius);
+
+  &:focus-within {
+    box-shadow: var(--halo-box-shadow);
+  }
+
+  svg {
+    height: 16px;
+    fill: var(--grey);
+    margin-right: var(--padding-sm);
+  }
+
+  input {
+    width: 100%;
+    margin-top: 4px;
+    background-color: transparent;
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    border: none;
+    outline: none;
+
+    &::placeholder {
+      color: var(--grey);
+    }
+  }
+}
