@@ -11,12 +11,8 @@ function configBypass(
     return false;
   }
 
-  if (req.method === "POST") {
-    // update config
-  } else {
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(config));
-  }
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(config));
 
   return false;
 }

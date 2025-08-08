@@ -1,8 +1,7 @@
 import styles from "./Discipline.module.scss";
+import { Spinner, Button, HighlightedText } from ".";
 import { Discipline as IDiscipline } from "../types";
 import { icons } from "../constants";
-import { HighlightedText } from "./HighlightedText";
-import { Spinner } from "./Spinner";
 
 interface DisciplineProps {
   isStarting: boolean;
@@ -35,7 +34,7 @@ export function Discipline({
       {isStarting ? (
         <Spinner small />
       ) : (
-        <button onClick={() => onClick(discipline)}>{icons.play}</button>
+        <Button onClick={() => onClick(discipline)}>{icons.play}</Button>
       )}
     </div>
   );

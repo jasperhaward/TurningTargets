@@ -1,0 +1,10 @@
+.header {
+  display: flex;
+  align-items: center;
+  margin-top: var(--padding-md);
+  gap: var(--padding-md);
+}
+
+.form {
+  flex-grow: 1;
+}

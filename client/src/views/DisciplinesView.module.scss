@@ -1,0 +1,21 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-md);
+
+  .search {
+    flex-grow: 1;
+    margin-top: var(--padding-lg);
+    margin-bottom: var(--padding-sm);
+  }
+
+  .new {
+    margin-top: var(--padding-sm);
+    padding: var(--padding-lg);
+  }
+}
+
+.disciplines {
+  flex-grow: 1;
+  overflow-y: auto;
+}

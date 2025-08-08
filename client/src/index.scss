@@ -50,6 +50,12 @@ h1 {
   font-size: var(--font-size-lg);
 }
 
+h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: var(--font-size-md);
+}
+
 p {
   margin-top: var(--padding-xs);
   margin-bottom: var(--padding-xs);
@@ -57,45 +63,14 @@ p {
   font-size: var(--font-size-sm);
 }
 
+label {
+  margin-top: var(--padding-lg);
+  margin-bottom: var(--padding-sm);
+}
+
 mark {
   color: var(--foreground);
   background-color: transparent;
   text-decoration: underline;
   text-underline-offset: 2px;
-}
-
-button {
-  margin: 0;
-  padding: var(--padding-sm);
-  border-width: 0;
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
-  color: var(--white);
-  background-color: var(--black);
-  transition: opacity var(--transition-duration);
-  font-family: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  outline: none;
-
-  &:has(svg) {
-    padding: 0;
-    padding-top: 5px;
-    color: var(--black);
-    background-color: transparent;
-  }
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &:disabled {
-    pointer-events: none;
-    opacity: var(--disabled-opacity);
-  }
-
-  &:hover,
-  &:focus {
-    opacity: var(--hover-opacity);
-  }
 }
