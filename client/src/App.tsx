@@ -5,6 +5,7 @@ import logo from "./assets/logo.png";
 import { Discipline } from "./types";
 import DisciplinesView from "./views/DisciplinesView";
 import NewDisciplineView from "./views/NewDisciplineView";
+import { sortAlphabetically } from "./utils";
 
 export default function App() {
   const [isNewDisciplineView, setIsNewDisciplineView] = useState(false);
@@ -19,8 +20,10 @@ export default function App() {
   async function loadDisciplines() {
     try {
       const response = await fetch("/config");
+
       const disciplines: Discipline[] = await response.json();
-      setDisciplines(disciplines);
+
+      setDisciplines(sortAlphabetically(disciplines));
     } catch (error) {
       console.error(error);
       setIsDisciplinesError(true);
@@ -42,7 +45,7 @@ export default function App() {
         <NewDisciplineView
           disciplines={disciplines}
           onDisciplinesUpdated={setDisciplines}
-          onBackClick={() => setIsNewDisciplineView(false)}
+          onNavigateToDisciplinesView={() => setIsNewDisciplineView(false)}
         />
       ) : (
         <DisciplinesView

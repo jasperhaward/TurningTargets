@@ -19,3 +19,12 @@
   flex-grow: 1;
   overflow-y: auto;
 }
+
+.buttons {
+  display: flex;
+  gap: var(--padding-lg);
+
+  button {
+    flex-grow: 1;
+  }
+}

@@ -7,14 +7,14 @@ interface DisciplineProps {
   isStarting: boolean;
   search: string;
   discipline: IDiscipline;
-  onClick: (discipline: IDiscipline) => void;
+  onStartClick: (discipline: IDiscipline) => void;
 }
 
 export function Discipline({
   isStarting,
   discipline,
   search,
-  onClick,
+  onStartClick,
 }: DisciplineProps) {
   return (
     <div className={styles.discipline}>
@@ -34,7 +34,8 @@ export function Discipline({
       {isStarting ? (
         <Spinner small />
       ) : (
-        <Button onClick={() => onClick(discipline)}>{icons.play}</Button>
+        // TODO: add delete button with confirmation modal
+        <Button onClick={() => onStartClick(discipline)}>{icons.play}</Button>
       )}
     </div>
   );

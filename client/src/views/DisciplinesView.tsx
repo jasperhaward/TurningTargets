@@ -21,8 +21,9 @@ export default function DisciplinesView({
   onNewClick,
 }: DisciplinesViewProps) {
   const [inputs, onInput] = useInputs({ search: "" });
-  const [activeDisciplineId, setActiveDisciplineId] = useState<number>();
+  const [startingDisciplineId, setStartingDisciplineId] = useState<number>();
   const [isToggleLoading, setIsToggleLoading] = useState(false);
+  const [isResetLoading, setIsResetLoading] = useState(false);
 
   const filteredDisciplnies = useMemo(() => {
     return disciplines.filter(
@@ -32,12 +33,13 @@ export default function DisciplinesView({
     );
   }, [disciplines, inputs.search]);
 
-  async function onDisciplineClick(discipline: IDiscipline) {
+  async function onDisciplineStartClick(discipline: IDiscipline) {
+    // TODO: add delay of 10s before firing API call with modal + countdown
     try {
-      setActiveDisciplineId(discipline.id);
-      await fetch(`/api/start/${discipline.intervals.join(",")}`);
+      setStartingDisciplineId(discipline.id);
+      await fetch(`/api/start?intervals=${discipline.intervals.join(",")}`);
     } finally {
-      setActiveDisciplineId(undefined);
+      setStartingDisciplineId(undefined);
     }
   }
 
@@ -47,6 +49,15 @@ export default function DisciplinesView({
       await fetch("/api/toggle");
     } finally {
       setIsToggleLoading(false);
+    }
+  }
+
+  async function onResetClick() {
+    try {
+      setIsResetLoading(true);
+      await fetch("/api/reset");
+    } finally {
+      setIsResetLoading(false);
     }
   }
 
@@ -87,17 +98,22 @@ export default function DisciplinesView({
           filteredDisciplnies.map((discipline) => (
             <Discipline
               key={discipline.id}
-              isStarting={discipline.id === activeDisciplineId}
+              isStarting={discipline.id === startingDisciplineId}
               search={inputs.search}
               discipline={discipline}
-              onClick={onDisciplineClick}
+              onStartClick={onDisciplineStartClick}
             />
           ))
         )}
       </div>
-      <Button disabled={isToggleLoading} onClick={onToggleClick}>
-        Toggle
-      </Button>
+      <div className={styles.buttons}>
+        <Button disabled={isToggleLoading} onClick={onToggleClick}>
+          Toggle
+        </Button>
+        <Button disabled={isResetLoading} onClick={onResetClick}>
+          Reset
+        </Button>
+      </div>
     </>
   );
 }
