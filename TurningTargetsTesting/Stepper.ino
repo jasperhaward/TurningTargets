@@ -6,19 +6,19 @@ const int COUNTER_CLOCKWISE = 1;
 
 void Stepper::setDirection(int _direction) {
   direction = _direction;
-  digitalWrite(directionPin, _direction);
+  digitalWrite(directionPin, direction);
 }
 
-Stepper::Stepper(int _directionPin, int _pulsePin, int _pulseDuration, int _stepsPerToggle) {
+Stepper::Stepper() {}
+
+void Stepper::setup(int _directionPin, int _pulsePin, int _pulseDuration, int _stepsPerToggle) {
   directionPin = _directionPin;
   pulsePin = _pulsePin;
   pulseDuration = _pulseDuration;
   stepsPerToggle = _stepsPerToggle;
-}
 
-void Stepper::setup() {
-  pinMode(pulsePin, OUTPUT);
   pinMode(directionPin, OUTPUT);
+  pinMode(pulsePin, OUTPUT);
 
   Stepper::setDirection(CLOCKWISE);
 }

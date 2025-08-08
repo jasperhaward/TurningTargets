@@ -3,16 +3,16 @@
 
 class Stepper {
   private:
-    int direction;
-    int directionPin;
     int pulsePin;
+    int directionPin;
+    int direction;
     int pulseDuration;
     int stepsPerToggle;
     void setDirection(int direction);
 
   public:
-    Stepper(int directionPin, int pulsePin, int pulseDuration, int stepsPerToggle);
-    void setup();
+    Stepper();
+    void setup(int directionPin, int pulsePin, int pulseDuration, int stepsPerToggle);
     void toggle();
     void reset();
 };
