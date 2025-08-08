@@ -1,18 +1,35 @@
 #include <Arduino.h>
 #include <SD.h>
 #include <Ethernet.h>
-#include "EthernetController.h"
+#include "HttpController.h"
 
 byte mac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x0B, 0x72 };
+// must be static (not DHCP) to reduce memory footprint
 IPAddress ip(192, 168, 1, 178);
-EthernetController controller(mac, ip);
+HttpController controller(80);
 
 void setup() {
   Serial.begin(9600);
-  controller.setup();
+  controller.setup(mac, ip);
   delay(100);
 }
 
 void loop() {
-  controller.request();
+  int intervals[20];
+
+  ControllerAction action = controller.request(intervals);
+
+  switch (action) {
+    case START:
+      Serial.println("START");
+      break;
+    case STOP:
+      Serial.println("STOP");
+      break;
+    case TOGGLE:
+      Serial.println("TOGGLE");
+      break;
+    case NONE:
+      break;
+  }
 }

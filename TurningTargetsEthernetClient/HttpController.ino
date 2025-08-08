@@ -1,8 +1,10 @@
 #include <Ethernet.h>
-#include "EthernetController.h"
+#include "HttpController.h"
+
+const char CONFIG_FILE[] = "CONFIG";
 
 // converts path into Arduino SD compatible filename eg: INDEX.CSS from /index.css
-char* EthernetController::extractFilename(char *path) {
+char* HttpController::extractFilename(char *path) {
   // remove prefixed /
   char* filename = path + 1;
 
@@ -14,9 +16,9 @@ char* EthernetController::extractFilename(char *path) {
   return filename;
 }
 
-char* EthernetController::extractContentType(char *filename) {
+char* HttpController::extractContentType(char *filename) {
   // special case for CONFIG file -> Content-Type: application/json
-  if (strstr(filename, "CONFIG")) {
+  if (strstr(filename, CONFIG_FILE)) {
     return "Content-Type: application/json";
   } else if (strstr(filename, ".JS")) {
     return "Content-Type: application/javascript";
@@ -31,7 +33,7 @@ char* EthernetController::extractContentType(char *filename) {
   }
 }
 
-void EthernetController::writeStaticFileResponse(EthernetClient &client, char *filename) {
+void HttpController::writeFileToResponse(EthernetClient &client, char *filename) {
   File file = SD.open(filename);
 
   byte clientBuffer[64];
@@ -55,13 +57,32 @@ void EthernetController::writeStaticFileResponse(EthernetClient &client, char *f
   file.close();
 }
 
+bool HttpController::writeRequestToFile(EthernetClient &client, char *filename) {
+  if (SD.exists(filename)) {
+    if (!SD.remove(filename)) {
+      return false;
+    }
+  }
 
-EthernetController::EthernetController(uint8_t *_mac, IPAddress _ip) : server(80) {
-  mac = _mac;
-  ip = _ip;
+  File file = SD.open(filename, FILE_WRITE);
+
+  if (!file) {
+    return false;
+  }
+
+  while (client.available()) {
+    char c = client.read();
+    file.print(c);
+  }
+
+  file.close();
+  
+  return true;
 }
 
-void EthernetController::setup() {
+HttpController::HttpController(uint16_t port) : server(port) {}
+
+void HttpController::setup(uint8_t *_mac, IPAddress ip) {
   Ethernet.begin(mac, ip);
   Ethernet.init(10);
 
@@ -83,36 +104,57 @@ void EthernetController::setup() {
   server.begin();
 }
 
-// handles request based on first line of HTTP headers eg: 'GET /api/config HTTP/1.1'
-void EthernetController::request() {
+ControllerAction HttpController::request(int *intervals) {
   EthernetClient client = server.available();
+  ControllerAction action = NONE;
 
-  // check client is connected & read upto first space in HTTP headers eg: '/api/config HTTP/1.1'
+  // check client is connected & read upto first space in HTTP headers: 'GET /api/config HTTP/1.1' -> '/api/config HTTP/1.1'
   if (client && client.connected() && client.find(' ')) {
     char path[20];
-    // read bytes into path until second space in HTTP headers eg : path -> '/api/config'
-    int end = client.readBytesUntil(' ', path, sizeof(path));
+    int end = client.readBytesUntil(' ', path, sizeof(path)); // read into path until second space eg : '/api/config HTTP/1.1' -> '/api/config'
     path[end] = '\0';
-    
-    while (client.read() != -1);
+
+    bool currentLineIsBlank = true;
+
+    while (client.available()) {
+      char character = client.read();
+      
+      if (character == '\n' && currentLineIsBlank) {
+        // if reached end of line (a newline character) and the line is blank, the HTTP headers have ended,
+        // break out of while loop so we can access HTTP payload later
+        break;
+      } else if (character == '\n') {
+        currentLineIsBlank = true; // start of new line
+      } else if (character != '\r') {
+        currentLineIsBlank = false;  // recieved character so line is not blank
+      }
+    }
 
     // handle explicit 'API' routes
-    if (strstr(path, "/toggle") || strstr(path, "/start") || strstr(path, "/save")) {
-      if (strstr(path, "/toggle")) {
-        Serial.println("Toggle called");
-      } else if (strstr(path, "/start")) {
-        // TODO: parse intervals
-        Serial.println("Start called");
+    if (strstr(path, "/api")) {
+      bool isSuccess = true;
+
+      if (strstr(path, "/start")) {
+        // TODO: parse and set intervals
+        action = START;
+      } else if (strstr(path, "/stop")) {
+        action = STOP;
+      } else if (strstr(path, "/toggle")) {
+        action = TOGGLE;
       } else if (strstr(path, "/save")) {
-        // TODO: save updated config JSON
-        Serial.println("Save called");
+        isSuccess = writeRequestToFile(client, CONFIG_FILE);
       } 
-    
-      client.println("HTTP/1.1 204 No Content");
+
+      if (isSuccess) {
+        client.println("HTTP/1.1 204 No Content");
+      } else {
+        client.println("HTTP/1.1 500 Internal Server Error");
+      }
+
       client.println("Connection: close");
       client.println();
     } else {
-      // handle loading static files
+      // handle static files
       char* filename;
 
       // handle index / route
@@ -127,12 +169,16 @@ void EthernetController::request() {
         client.println(extractContentType(filename));
         client.println("Connection: close");
         client.println();
-        writeStaticFileResponse(client, filename);
+        writeFileToResponse(client, filename);
       } else {
         client.println("HTTP/1.1 404 Not Found");
+        client.println("Connection: close");
+        client.println();
       }
-    }
 
-    client.stop();
+      client.stop();
+    }
   }
+
+  return action;
 }
