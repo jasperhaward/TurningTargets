@@ -2,18 +2,20 @@
 #ifndef Discipline_h
 #define Discipline_h
 
+// const int DISCIPLINE_TERMINATOR = -1;
+
 class Discipline {
   private:
     int* intervals;
-    int intervalIndex;
-    unsigned long nextIntervalMillis;
+    int activeIntervalIndex;
+    unsigned long activeIntervalEnd;
 
   public:
     bool isActive;
     Discipline(int* intervals);
     void start();
     void stop();
-    bool hasIntervalPassed();
+    bool isActiveIntervalComplete();
     void beginNextInterval();
 };
 

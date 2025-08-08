@@ -7,26 +7,26 @@ Discipline::Discipline(int* _intervals) {
 
 void Discipline::start() {
   isActive = true;
-  intervalIndex = 0;
-  nextIntervalMillis = millis() + intervals[0] * 1000;
+  activeIntervalIndex = 0;
+  activeIntervalEnd = millis() + intervals[activeIntervalIndex] * 1000;
 }
 
 void Discipline::stop() {
   isActive = false;
 }
 
-bool Discipline::hasIntervalPassed() {
-  return isActive && millis() >= nextIntervalMillis;
+bool Discipline::isActiveIntervalComplete() {
+  return isActive && millis() >= activeIntervalEnd;
 }
 
 void Discipline::beginNextInterval() {
-  int nextInterval = intervals[intervalIndex + 1];
+  int nextInterval = intervals[activeIntervalIndex + 1];
 
   // the last interval in a discipline's sequence is -1
   if (nextInterval == -1) {
-    Discipline::stop();
+    stop();
   } else {
-    nextIntervalMillis = millis() + nextInterval * 1000;
-    intervalIndex++;
+    activeIntervalEnd = millis() + nextInterval * 1000;
+    activeIntervalIndex++;
   }
 }
