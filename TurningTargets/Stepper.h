@@ -7,11 +7,11 @@ class Stepper {
     int directionPin;
     int pulsePin;
     int pulseDuration;
-    int stepsPerRevolution;
+    int stepsPerToggle;
     void setDirection(int direction);
 
   public:
-    Stepper(int directionPin, int pulsePin, int pulseDuration, int stepsPerRevolution);
+    Stepper(int directionPin, int pulsePin, int pulseDuration, int stepsPerToggle);
     void setup();
     void toggle();
     void reset();
