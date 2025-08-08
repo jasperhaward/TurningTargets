@@ -173,8 +173,8 @@ ControllerAction HttpController::request(int *intervals, size_t length) {
         } else {
           isSuccess = false;
         }
-      } else if (strstr(path, "/stop")) {
-        action = STOP;
+      } else if (strstr(path, "/reset")) {
+        action = RESET;
       } else if (strstr(path, "/toggle")) {
         action = TOGGLE;
       } else if (strstr(path, "/save")) {

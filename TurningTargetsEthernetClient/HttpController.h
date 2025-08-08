@@ -7,7 +7,7 @@
 enum ControllerAction {
   NONE,
   START,
-  STOP,
+  RESET,
   TOGGLE
 };
 

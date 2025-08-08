@@ -30,8 +30,8 @@ void loop() {
         Serial.println(interval);
       }
       break;
-    case STOP:
-      Serial.println("STOP");
+    case RESET:
+      Serial.println("RESET");
       break;
     case TOGGLE:
       Serial.println("TOGGLE");
