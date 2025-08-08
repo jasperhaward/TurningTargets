@@ -17,11 +17,18 @@ void setup() {
 void loop() {
   int intervals[20];
 
-  ControllerAction action = controller.request(intervals);
+  ControllerAction action = controller.request(intervals, sizeof(intervals) / sizeof(intervals[0]));
 
   switch (action) {
     case START:
       Serial.println("START");
+
+      for (int interval : intervals) {
+        if (interval == -1) {
+          break;
+        }
+        Serial.println(interval);
+      }
       break;
     case STOP:
       Serial.println("STOP");

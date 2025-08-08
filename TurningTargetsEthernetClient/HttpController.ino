@@ -16,6 +16,11 @@ char* HttpController::extractFilename(char *path) {
   return filename;
 }
 
+// key must be suffixed with = eg `intervals=`
+char* HttpController::extractQueryParameter(char *path, char *key) {
+  return strstr(path, key) + strlen(key);
+}
+
 char* HttpController::extractContentType(char *filename) {
   // special case for CONFIG file -> Content-Type: application/json
   if (strstr(filename, CONFIG_FILE)) {
@@ -80,6 +85,32 @@ bool HttpController::writeRequestToFile(EthernetClient &client, char *filename) 
   return true;
 }
 
+bool HttpController::parseIntervals(char *value, int *intervals, size_t length) {
+  char *pointer;
+  int index = 0;
+  
+  pointer = strtok(value, ",");
+
+  if (pointer == NULL) {
+    return false;
+  }
+
+  while (pointer != NULL) {
+    intervals[index] = atoi(pointer); 
+    pointer = strtok(NULL, ",");
+    index++;
+
+    // prevent overflow from more intervals being provided than can fit in `*intervals`
+    if (index > length - 1) {
+      return false;
+    }
+  }
+  
+  intervals[index] = -1; // -1 is termination character in `int *intervals`
+
+  return true;
+}
+
 HttpController::HttpController(uint16_t port) : server(port) {}
 
 void HttpController::setup(uint8_t *_mac, IPAddress ip) {
@@ -104,13 +135,13 @@ void HttpController::setup(uint8_t *_mac, IPAddress ip) {
   server.begin();
 }
 
-ControllerAction HttpController::request(int *intervals) {
+ControllerAction HttpController::request(int *intervals, size_t length) {
   EthernetClient client = server.available();
   ControllerAction action = NONE;
 
   // check client is connected & read upto first space in HTTP headers: 'GET /api/config HTTP/1.1' -> '/api/config HTTP/1.1'
   if (client && client.connected() && client.find(' ')) {
-    char path[20];
+    char path[64];
     int end = client.readBytesUntil(' ', path, sizeof(path)); // read into path until second space eg : '/api/config HTTP/1.1' -> '/api/config'
     path[end] = '\0';
 
@@ -134,9 +165,14 @@ ControllerAction HttpController::request(int *intervals) {
     if (strstr(path, "/api")) {
       bool isSuccess = true;
 
-      if (strstr(path, "/start")) {
-        // TODO: parse and set intervals
-        action = START;
+      if (strstr(path, "/start?intervals=")) {
+        char* intervalsParameter = extractQueryParameter(path, "intervals=");
+
+        if (parseIntervals(intervalsParameter, intervals, length)) {
+          action = START;
+        } else {
+          isSuccess = false;
+        }
       } else if (strstr(path, "/stop")) {
         action = STOP;
       } else if (strstr(path, "/toggle")) {
