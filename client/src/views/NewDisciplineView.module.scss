@@ -3,6 +3,11 @@
   align-items: center;
   margin-top: var(--padding-lg);
   gap: var(--padding-md);
+  justify-content: space-between;
+
+  .spacer {
+    width: 24px;
+  }
 }
 
 .form {
