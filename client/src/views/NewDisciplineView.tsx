@@ -87,6 +87,7 @@ export default function NewDisciplineView({
           {icons.chevronLeft}
         </Button>
         <h2>New discipline</h2>
+        <div className={styles.spacer} />
       </div>
       <div className={styles.form}>
         <label>Code</label>
