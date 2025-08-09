@@ -3,7 +3,7 @@
   align-items: center;
   padding: var(--padding-sm) var(--padding-md);
   border-color: var(--grey-dark);
-  border-width: 1px;
+  border-width: var(--border-width);
   border-radius: var(--border-radius);
 
   &:focus-within {

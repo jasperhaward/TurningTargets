@@ -1,0 +1,24 @@
+.curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: var(--backdrop-blur);
+
+  .modal {
+    width: 80%;
+    padding: var(--padding-xl);
+    background-color: var(--white);
+    border-color: var(--grey-dark);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+
+    .title {
+      font-size: var(--font-size-md);
+    }
+  }
+}
