@@ -2,7 +2,7 @@
 #ifndef Discipline_h
 #define Discipline_h
 
-// const int DISCIPLINE_TERMINATOR = -1;
+// TODO: const int DISCIPLINE_TERMINATOR = -1;
 
 class Discipline {
   private:
