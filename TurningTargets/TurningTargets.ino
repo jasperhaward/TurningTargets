@@ -11,8 +11,6 @@ const int STEPPER_PULSE_DURATION = 2500;
 const int STEPPER_STEPS_PER_TOGGLE = 200;
 
 byte mac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x0B, 0x72 };
-// static IP reduces memory footprint
-IPAddress ip(192, 168, 1, 178);
 HttpController controller(80);
 Stepper stepper;
 Discipline discipline({});
@@ -20,7 +18,7 @@ Discipline discipline({});
 void setup() {
   Serial.begin(9600);
 
-  controller.setup(mac, ip);
+  controller.setup(mac);
   stepper.setup(8, 7, STEPPER_PULSE_DURATION, STEPPER_STEPS_PER_TOGGLE);
 
   delay(100);

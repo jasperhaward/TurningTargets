@@ -13,18 +13,16 @@ enum ControllerAction {
 
 class HttpController {
   private:
-    uint8_t* mac;
-    IPAddress ip;
     EthernetServer server;
     char* extractFilename(char *path);
     char* extractQueryParameter(char *path, char *key);
-    char* extractContentType(char *filename);
+    void writeContentTypeHeadersToResponse(EthernetClient &client, char *filename);
     void writeFileToResponse(EthernetClient &client, char *filename);
     bool writeRequestToFile(EthernetClient &client, char *filename);
     bool parseIntervals(char *value, int *intervals, size_t length);
   public:
-    HttpController(uint16_t port);
-    void setup(uint8_t *mac, IPAddress ip);
+    HttpController(uint8_t port);
+    void setup(uint8_t *mac);
     ControllerAction request(int *intervals, size_t length);
 };
 

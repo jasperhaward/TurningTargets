@@ -3,14 +3,6 @@
 
 const char CONFIG_FILE[] = "CONFIG";
 
-// memory saving
-const char CONTENT_TYPE_JSON[] PROGMEM = "Content-Type: application/json";
-const char CONTENT_TYPE_JAVASCRIPT[] PROGMEM = "Content-Type: application/javascript";
-const char CONTENT_TYPE_CSS[] PROGMEM = "Content-Type: text/css";
-const char CONTENT_TYPE_PNG[] PROGMEM = "Content-Type: image/png";
-const char CONTENT_TYPE_HTML[] PROGMEM = "Content-Type: text/html";
-const char CONTENT_TYPE_TEXT[] PROGMEM = "Content-Type: text/plain";
-
 // converts path into Arduino SD compatible filename eg: INDEX.CSS from /index.css
 char* HttpController::extractFilename(char *path) {
   // remove prefixed /
@@ -29,46 +21,43 @@ char* HttpController::extractQueryParameter(char *path, char *key) {
   return strstr(path, key) + strlen(key);
 }
 
-char* HttpController::extractContentType(char *filename) {
-  char* contentType =  malloc(40);
-
+void HttpController::writeContentTypeHeadersToResponse(EthernetClient &client, char *filename) {
   // special case for CONFIG file -> Content-Type: application/json
   if (strstr(filename, CONFIG_FILE)) {
-    strcpy_P(contentType, CONTENT_TYPE_JSON);
+    client.println(F("Content-Type: application/json"));
   } else if (strstr(filename, ".JS")) {
-    strcpy_P(contentType, CONTENT_TYPE_JAVASCRIPT);
+    client.println(F("Content-Type: application/javascript"));
   } else if (strstr(filename, ".CSS")) {
-    strcpy_P(contentType, CONTENT_TYPE_CSS);
+    client.println(F("Content-Type: text/css"));
   } else if (strstr(filename, ".PNG")) {
-    strcpy_P(contentType, CONTENT_TYPE_PNG);
+    client.println(F("Content-Type: image/png"));
+    // cache images for 30 days
+    client.println(F("Cache-Control: max-age=2592000, public"));
   } else if (strstr(filename, ".HTM")) {
-    strcpy_P(contentType, CONTENT_TYPE_HTML);
+    client.println(F("Content-Type: text/html"));
   } else {
-    strcpy_P(contentType, CONTENT_TYPE_TEXT);
+    client.println(F("Content-Type: text/plain"));
   }
-
-  return contentType;
 }
 
 void HttpController::writeFileToResponse(EthernetClient &client, char *filename) {
   File file = SD.open(filename);
-
-  byte clientBuffer[64];
-  int byteCount = 0;
+  byte buffer[32];
+  int bytes = 0;
 
   while (file.available()) {
-    clientBuffer[byteCount] = file.read();
-    byteCount++;
+    buffer[bytes] = file.read();
+    bytes++;
 
-    if (byteCount > 63) {
-      client.write(clientBuffer, 64);
-      byteCount = 0;
+    if (bytes > 31) {
+      client.write(buffer, 32);
+      bytes = 0;
     }
   }
 
-  // final remainder < 64 byte cleanup packet
-  if (byteCount > 0) {
-    client.write(clientBuffer, byteCount);
+  // final remainder < 32 byte cleanup packet
+  if (bytes > 0) {
+    client.write(buffer, bytes);
   }
 
   file.close();
@@ -123,15 +112,14 @@ bool HttpController::parseIntervals(char *value, int *intervals, size_t length) 
   return true;
 }
 
-HttpController::HttpController(uint16_t port) : server(port) {}
+HttpController::HttpController(uint8_t port) : server(port) {}
 
-void HttpController::setup(uint8_t *mac, IPAddress ip) {
-  // if (Ethernet.begin(mac) == 0) {
-  //   Serial.println(F("DHCP setup failed, using static IP."));
-    Ethernet.begin(mac, ip);
-  // } else {
-  //   Serial.println(F("DHCP setup successful."));
-  // }
+void HttpController::setup(uint8_t *mac) {
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println(F("DHCP setup failed."));
+  } else {
+    Serial.println(F("DHCP setup successful."));
+  }
 
   Ethernet.init(10);
 
@@ -200,12 +188,12 @@ ControllerAction HttpController::request(int *intervals, size_t length) {
       } 
 
       if (isSuccess) {
-        client.println("HTTP/1.1 204 No Content");
+        client.println(F("HTTP/1.1 204 No Content"));
       } else {
-        client.println("HTTP/1.1 500 Internal Server Error");
+        client.println(F("HTTP/1.1 500 Internal Server Error"));
       }
 
-      client.println("Connection: close");
+      client.println(F("Connection: close"));
       client.println();
     } else {
       // handle static files
@@ -219,19 +207,19 @@ ControllerAction HttpController::request(int *intervals, size_t length) {
       }
 
       if (SD.exists(filename)) {
-        client.println("HTTP/1.1 200 OK");
-        client.println(extractContentType(filename));
-        client.println("Connection: close");
+        client.println(F("HTTP/1.1 200 OK"));
+        writeContentTypeHeadersToResponse(client, filename);
+        client.println(F("Connection: close"));
         client.println();
         writeFileToResponse(client, filename);
       } else {
-        client.println("HTTP/1.1 404 Not Found");
-        client.println("Connection: close");
+        client.println(F("HTTP/1.1 404 Not Found"));
+        client.println(F("Connection: close"));
         client.println();
       }
-
-      client.stop();
     }
+
+    client.stop();
   }
 
   return action;
