@@ -118,7 +118,8 @@ void HttpController::setup(uint8_t *mac) {
   if (Ethernet.begin(mac) == 0) {
     Serial.println(F("DHCP setup failed."));
   } else {
-    Serial.println(F("DHCP setup successful."));
+    Serial.print(F("DHCP setup successful, IP provided: "));
+    Serial.println(Ethernet.localIP());
   }
 
   Ethernet.init(10);
