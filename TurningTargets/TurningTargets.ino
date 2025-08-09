@@ -11,7 +11,7 @@ const int STEPPER_PULSE_DURATION = 2500;
 const int STEPPER_STEPS_PER_TOGGLE = 200;
 
 byte mac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x0B, 0x72 };
-// must be static (not DHCP) to reduce memory footprint
+// static IP reduces memory footprint
 IPAddress ip(192, 168, 1, 178);
 HttpController controller(80);
 Stepper stepper;
@@ -30,7 +30,7 @@ void loop() {
   if (discipline.isActiveIntervalComplete()) {
     discipline.beginNextInterval();
     stepper.toggle();
-    Serial.println("INTERVAL");
+    Serial.println(F("INTERVAL"));
   }
   
   int intervals[20];
@@ -39,7 +39,7 @@ void loop() {
 
   switch (action) {
     case START:
-      Serial.println("START");
+      Serial.println(F("START"));
 
       for (int interval : intervals) {
         if (interval == -1) {
@@ -58,13 +58,13 @@ void loop() {
       stepper.toggle();
       break;
     case RESET:
-      Serial.println("RESET");
+      Serial.println(F("RESET"));
       discipline.stop();
       stepper.reset();
       break;
     case TOGGLE:
       if (!discipline.isActive) {
-        Serial.println("TOGGLE");
+        Serial.println(F("TOGGLE"));
         stepper.toggle();
       }
       break;

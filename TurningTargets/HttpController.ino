@@ -3,6 +3,14 @@
 
 const char CONFIG_FILE[] = "CONFIG";
 
+// memory saving
+const char CONTENT_TYPE_JSON[] PROGMEM = "Content-Type: application/json";
+const char CONTENT_TYPE_JAVASCRIPT[] PROGMEM = "Content-Type: application/javascript";
+const char CONTENT_TYPE_CSS[] PROGMEM = "Content-Type: text/css";
+const char CONTENT_TYPE_PNG[] PROGMEM = "Content-Type: image/png";
+const char CONTENT_TYPE_HTML[] PROGMEM = "Content-Type: text/html";
+const char CONTENT_TYPE_TEXT[] PROGMEM = "Content-Type: text/plain";
+
 // converts path into Arduino SD compatible filename eg: INDEX.CSS from /index.css
 char* HttpController::extractFilename(char *path) {
   // remove prefixed /
@@ -22,20 +30,24 @@ char* HttpController::extractQueryParameter(char *path, char *key) {
 }
 
 char* HttpController::extractContentType(char *filename) {
+  char* contentType =  malloc(40);
+
   // special case for CONFIG file -> Content-Type: application/json
   if (strstr(filename, CONFIG_FILE)) {
-    return "Content-Type: application/json";
+    strcpy_P(contentType, CONTENT_TYPE_JSON);
   } else if (strstr(filename, ".JS")) {
-    return "Content-Type: application/javascript";
+    strcpy_P(contentType, CONTENT_TYPE_JAVASCRIPT);
   } else if (strstr(filename, ".CSS")) {
-    return "Content-Type: text/css";
+    strcpy_P(contentType, CONTENT_TYPE_CSS);
   } else if (strstr(filename, ".PNG")) {
-    return "Content-Type: image/png";
+    strcpy_P(contentType, CONTENT_TYPE_PNG);
   } else if (strstr(filename, ".HTM")) {
-    return "Content-Type: text/html";
+    strcpy_P(contentType, CONTENT_TYPE_HTML);
   } else {
-    return "Content-Type: text/plain";
+    strcpy_P(contentType, CONTENT_TYPE_TEXT);
   }
+
+  return contentType;
 }
 
 void HttpController::writeFileToResponse(EthernetClient &client, char *filename) {
@@ -113,22 +125,28 @@ bool HttpController::parseIntervals(char *value, int *intervals, size_t length) 
 
 HttpController::HttpController(uint16_t port) : server(port) {}
 
-void HttpController::setup(uint8_t *_mac, IPAddress ip) {
-  Ethernet.begin(mac, ip);
+void HttpController::setup(uint8_t *mac, IPAddress ip) {
+  // if (Ethernet.begin(mac) == 0) {
+  //   Serial.println(F("DHCP setup failed, using static IP."));
+    Ethernet.begin(mac, ip);
+  // } else {
+  //   Serial.println(F("DHCP setup successful."));
+  // }
+
   Ethernet.init(10);
 
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-    Serial.println("Ethernet shield/hardware not found.");
+    Serial.println(F("Ethernet shield/hardware not found."));
     while (true);
   }
 
   if (Ethernet.linkStatus() == LinkOFF) {
-    Serial.println("Ethernet cable is not connected.");
+    Serial.println(F("Ethernet cable is not connected."));
     while (true);
   }
 
   if (!SD.begin(4)) {
-    Serial.println("SD card not found.");
+    Serial.println(F("SD card not found."));
     while (true);
   }
 
