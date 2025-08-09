@@ -14,6 +14,7 @@ import { icons } from "../constants";
 import { caseInsensitiveIncludes } from "../utils";
 import { useInputs } from "../hooks";
 import DeleteDisciplineModal from "./DeleteDisciplineModal";
+import StartDisciplineModal from "./StartDisciplineModal";
 
 type ModalType = "start" | "delete";
 
@@ -52,18 +53,6 @@ export default function DisciplinesView({
     setModal("start");
   }
 
-  async function onStartSuccess(discipline: IDiscipline) {
-    // temporary func til modal is implemented
-    // onDisciplinesUpdated(updatedDisciplines);
-
-    await fetch(`/api/start?intervals=${discipline.intervals.join(",")}`);
-  }
-
-  function onStartCancel() {
-    setStartingDiscipline(undefined);
-    setModal(null);
-  }
-
   function onDeleteClick(discipline: IDiscipline) {
     setDeletingDiscipline(discipline);
     setModal("delete");
@@ -71,12 +60,12 @@ export default function DisciplinesView({
 
   function onDeleteSuccess(updatedDisciplines: IDiscipline[]) {
     onDisciplinesUpdated(updatedDisciplines);
-    setModal(null);
-    setDeletingDiscipline(undefined);
+    onModalClose();
   }
 
-  function onDeleteCancel() {
+  function onModalClose() {
     setModal(null);
+    setStartingDiscipline(undefined);
     setDeletingDiscipline(undefined);
   }
 
@@ -97,8 +86,6 @@ export default function DisciplinesView({
       setIsResetLoading(false);
     }
   }
-
-  // <>Are you sure you want to delete discipline{" "}<b>{deletingDiscipline!.name}</b>?</>
 
   return (
     <>
@@ -140,8 +127,7 @@ export default function DisciplinesView({
               search={inputs.search}
               discipline={discipline}
               onDeleteClick={onDeleteClick}
-              // temporary, should be onStartClick once modal is complete
-              onStartClick={onStartSuccess}
+              onStartClick={onStartClick}
             />
           ))
         )}
@@ -161,10 +147,14 @@ export default function DisciplinesView({
               deletingDiscipline={deletingDiscipline!}
               disciplines={disciplines}
               onDeleteSuccess={onDeleteSuccess}
-              onDeleteCancel={onDeleteCancel}
+              onDeleteCancel={onModalClose}
             />
           ) : (
-            <div>Start modal...</div>
+            <StartDisciplineModal
+              startingDiscipline={startingDiscipline!}
+              onStartCancel={onModalClose}
+              onStartSuccess={onModalClose}
+            />
           )}
         </Modal>
       )}

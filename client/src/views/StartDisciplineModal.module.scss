@@ -1,0 +1,14 @@
+.countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-xl);
+
+  span {
+    font-size: 3rem;
+  }
+}
+
+.cancel {
+  width: 100%;
+}
