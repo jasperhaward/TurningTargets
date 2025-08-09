@@ -6,8 +6,9 @@
   display: flex;
   justify-content: space-between;
   margin-top: var(--padding-lg);
+  gap: 30%;
 
   button {
-    padding: var(--padding-md) var(--padding-lg);
+    flex-grow: 1;
   }
 }

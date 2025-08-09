@@ -45,10 +45,10 @@ export default function DeleteDisciplineModal({
         <b className={styles.name}>{deletingDiscipline.name}</b>?
       </ModalTitle>
       <div className={styles.buttons}>
-        <Button onClick={onDeleteCancel}>No</Button>
         <Button disabled={isDeleteLoading} onClick={onDeleteClick}>
           Yes
         </Button>
+        <Button onClick={onDeleteCancel}>No</Button>
       </div>
     </>
   );
