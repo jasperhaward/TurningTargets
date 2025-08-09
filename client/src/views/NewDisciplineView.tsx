@@ -112,9 +112,13 @@ export default function NewDisciplineView({
           onInput={onInput}
         />
         <p className={styles.intervalsDescription}>
-          Must contain only positive numbers and commas, and be made up of an
-          odd number of intervals. Each number is the length of an interval in
-          seconds and must not be greater than 300 seconds.
+          A comma separated list of numbers where each number represents the
+          length of an interval in seconds:
+          <ul>
+            <li>Must contain only positive numbers and commas.</li>
+            <li>Must be made up of an odd number of intervals.</li>
+            <li>Each interval must not be greater than 300 seconds.</li>
+          </ul>
         </p>
       </div>
       <Button disabled={!isFormValid || isSaveLoading} onClick={onSaveClick}>
