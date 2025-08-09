@@ -52,10 +52,11 @@ export default function DisciplinesView({
     setModal("start");
   }
 
-  async function onStartSuccess() {
-    await fetch(
-      `/api/start?intervals=${startingDiscipline!.intervals.join(",")}`
-    );
+  async function onStartSuccess(discipline: IDiscipline) {
+    // temporary func til modal is implemented
+    // onDisciplinesUpdated(updatedDisciplines);
+
+    await fetch(`/api/start?intervals=${discipline.intervals.join(",")}`);
   }
 
   function onStartCancel() {
@@ -139,7 +140,8 @@ export default function DisciplinesView({
               search={inputs.search}
               discipline={discipline}
               onDeleteClick={onDeleteClick}
-              onStartClick={onStartClick}
+              // temporary, should be onStartClick once modal is complete
+              onStartClick={onStartSuccess}
             />
           ))
         )}
