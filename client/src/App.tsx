@@ -52,6 +52,7 @@ export default function App() {
           isDisciplinesLoading={isDisciplinesLoading}
           isDisciplinesError={isDisciplinesError}
           disciplines={disciplines}
+          onDisciplinesUpdated={setDisciplines}
           onNewClick={() => setIsNewDisciplineView(true)}
         />
       )}

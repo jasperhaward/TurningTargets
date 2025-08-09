@@ -4,16 +4,16 @@ import { Discipline as IDiscipline } from "../types";
 import { icons } from "../constants";
 
 interface DisciplineProps {
-  isStarting: boolean;
   search: string;
   discipline: IDiscipline;
+  onDeleteClick: (discipline: IDiscipline) => void;
   onStartClick: (discipline: IDiscipline) => void;
 }
 
 export function Discipline({
-  isStarting,
   discipline,
   search,
+  onDeleteClick,
   onStartClick,
 }: DisciplineProps) {
   return (
@@ -31,12 +31,10 @@ export function Discipline({
           {discipline.intervals.join(", ")}
         </div>
       </div>
-      {isStarting ? (
-        <Spinner small />
-      ) : (
-        // TODO: add delete button with confirmation modal
+      <div className={styles.buttons}>
         <Button onClick={() => onStartClick(discipline)}>{icons.play}</Button>
-      )}
+        <Button onClick={() => onDeleteClick(discipline)}>{icons.bin}</Button>
+      </div>
     </div>
   );
 }

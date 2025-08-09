@@ -8,6 +8,7 @@
   --padding-md: 0.75rem;
   --padding-lg: 1rem;
   --padding-xl: 1.5rem;
+  --border-width: 1px;
   --border-radius: 0.5rem;
   --transition-duration: 0.15s;
   --disabled-opacity: 0.6;
@@ -17,6 +18,7 @@
   --font-size-lg: 1.5rem;
   --halo-box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px,
     rgb(161, 161, 170) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  --backdrop-blur: blur(4px);
 }
 
 *,

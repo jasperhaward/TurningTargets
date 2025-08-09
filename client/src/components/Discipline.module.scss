@@ -3,7 +3,6 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--padding-sm);
-  margin-right: var(--padding-md);
 
   .detailsContainer {
     min-width: 0;
@@ -32,10 +31,15 @@
         border-radius: var(--border-radius);
       }
     }
+
+    .intervals {
+      margin-top: var(--padding-xs);
+      color: var(--grey);
+    }
   }
 
-  .intervals {
-    margin-top: var(--padding-xs);
-    color: var(--grey);
+  .buttons {
+    display: flex;
+    gap: var(--padding-md);
   }
 }
