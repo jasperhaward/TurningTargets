@@ -1,0 +1,13 @@
+.name {
+  padding-left: var(--padding-sm);
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--padding-lg);
+
+  button {
+    padding: var(--padding-md) var(--padding-lg);
+  }
+}

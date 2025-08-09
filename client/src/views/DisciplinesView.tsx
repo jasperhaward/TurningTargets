@@ -1,16 +1,27 @@
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 import styles from "./DisciplinesView.module.scss";
 
-import { Discipline, Centered, Button, Input, Spinner } from "../components";
+import {
+  Discipline,
+  Centered,
+  Button,
+  Input,
+  Spinner,
+  Modal,
+} from "../components";
 import { Discipline as IDiscipline } from "../types";
 import { icons } from "../constants";
 import { caseInsensitiveIncludes } from "../utils";
 import { useInputs } from "../hooks";
+import DeleteDisciplineModal from "./DeleteDisciplineModal";
+
+type ModalType = "start" | "delete";
 
 interface DisciplinesViewProps {
   isDisciplinesLoading: boolean;
   isDisciplinesError: boolean;
   disciplines: IDiscipline[];
+  onDisciplinesUpdated: (disciplines: IDiscipline[]) => void;
   onNewClick: () => void;
 }
 
@@ -18,12 +29,15 @@ export default function DisciplinesView({
   isDisciplinesLoading,
   isDisciplinesError,
   disciplines,
+  onDisciplinesUpdated,
   onNewClick,
 }: DisciplinesViewProps) {
   const [inputs, onInput] = useInputs({ search: "" });
-  const [startingDisciplineId, setStartingDisciplineId] = useState<number>();
+  const [modal, setModal] = useState<ModalType | null>(null);
   const [isToggleLoading, setIsToggleLoading] = useState(false);
   const [isResetLoading, setIsResetLoading] = useState(false);
+  const [startingDiscipline, setStartingDiscipline] = useState<IDiscipline>();
+  const [deletingDiscipline, setDeletingDiscipline] = useState<IDiscipline>();
 
   const filteredDisciplnies = useMemo(() => {
     return disciplines.filter(
@@ -33,14 +47,36 @@ export default function DisciplinesView({
     );
   }, [disciplines, inputs.search]);
 
-  async function onDisciplineStartClick(discipline: IDiscipline) {
-    // TODO: add delay of 10s before firing API call with modal + countdown
-    try {
-      setStartingDisciplineId(discipline.id);
-      await fetch(`/api/start?intervals=${discipline.intervals.join(",")}`);
-    } finally {
-      setStartingDisciplineId(undefined);
-    }
+  function onStartClick(discipline: IDiscipline) {
+    setStartingDiscipline(discipline);
+    setModal("start");
+  }
+
+  async function onStartSuccess() {
+    await fetch(
+      `/api/start?intervals=${startingDiscipline!.intervals.join(",")}`
+    );
+  }
+
+  function onStartCancel() {
+    setStartingDiscipline(undefined);
+    setModal(null);
+  }
+
+  function onDeleteClick(discipline: IDiscipline) {
+    setDeletingDiscipline(discipline);
+    setModal("delete");
+  }
+
+  function onDeleteSuccess(updatedDisciplines: IDiscipline[]) {
+    onDisciplinesUpdated(updatedDisciplines);
+    setModal(null);
+    setDeletingDiscipline(undefined);
+  }
+
+  function onDeleteCancel() {
+    setModal(null);
+    setDeletingDiscipline(undefined);
   }
 
   async function onToggleClick() {
@@ -60,6 +96,8 @@ export default function DisciplinesView({
       setIsResetLoading(false);
     }
   }
+
+  // <>Are you sure you want to delete discipline{" "}<b>{deletingDiscipline!.name}</b>?</>
 
   return (
     <>
@@ -98,10 +136,10 @@ export default function DisciplinesView({
           filteredDisciplnies.map((discipline) => (
             <Discipline
               key={discipline.id}
-              isStarting={discipline.id === startingDisciplineId}
               search={inputs.search}
               discipline={discipline}
-              onStartClick={onDisciplineStartClick}
+              onDeleteClick={onDeleteClick}
+              onStartClick={onStartClick}
             />
           ))
         )}
@@ -114,6 +152,20 @@ export default function DisciplinesView({
           Reset
         </Button>
       </div>
+      {modal && (startingDiscipline || deletingDiscipline) && (
+        <Modal>
+          {modal === "delete" ? (
+            <DeleteDisciplineModal
+              deletingDiscipline={deletingDiscipline!}
+              disciplines={disciplines}
+              onDeleteSuccess={onDeleteSuccess}
+              onDeleteCancel={onDeleteCancel}
+            />
+          ) : (
+            <div>Start modal...</div>
+          )}
+        </Modal>
+      )}
     </>
   );
 }
