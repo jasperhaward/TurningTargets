@@ -1,5 +1,6 @@
 #include <Ethernet.h>
 #include "HttpController.h"
+#include "Discipline.h"
 
 const char CONFIG_FILE[] = "CONFIG";
 
@@ -107,7 +108,7 @@ bool HttpController::parseIntervals(char *value, int *intervals, size_t length) 
     }
   }
   
-  intervals[index] = -1; // -1 is termination character in `int *intervals`
+  intervals[index] = DISCIPLINE_TERMINATOR; // -1 is termination character in `int *intervals`
 
   return true;
 }
@@ -152,19 +153,19 @@ ControllerAction HttpController::request(int *intervals, size_t length) {
     int end = client.readBytesUntil(' ', path, sizeof(path)); // read into path until second space eg : '/api/config HTTP/1.1' -> '/api/config'
     path[end] = '\0';
 
-    bool currentLineIsBlank = true;
+    bool isCurrentLineBlank = true;
 
     while (client.available()) {
       char character = client.read();
       
-      if (character == '\n' && currentLineIsBlank) {
+      if (character == '\n' && isCurrentLineBlank) {
         // if reached end of line (a newline character) and the line is blank, the HTTP headers have ended,
         // break out of while loop so we can access HTTP payload later
         break;
       } else if (character == '\n') {
-        currentLineIsBlank = true; // start of new line
+        isCurrentLineBlank = true; // start of new line
       } else if (character != '\r') {
-        currentLineIsBlank = false;  // recieved character so line is not blank
+        isCurrentLineBlank = false;  // recieved character so line is not blank
       }
     }
 

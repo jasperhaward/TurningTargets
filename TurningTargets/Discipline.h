@@ -2,8 +2,6 @@
 #ifndef Discipline_h
 #define Discipline_h
 
-// TODO: const int DISCIPLINE_TERMINATOR = -1;
-
 class Discipline {
   private:
     int* intervals;

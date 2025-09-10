@@ -1,8 +1,9 @@
 #include "Discipline.h"
 
-Discipline::Discipline(int* _intervals) {
+const int DISCIPLINE_TERMINATOR = -1;
+
+Discipline::Discipline(int* intervals): intervals(intervals) {
   isActive = false;
-  intervals = _intervals;
 }
 
 void Discipline::start() {
@@ -23,7 +24,7 @@ void Discipline::beginNextInterval() {
   int nextInterval = intervals[activeIntervalIndex + 1];
 
   // the last interval in a discipline's sequence is -1
-  if (nextInterval == -1) {
+  if (nextInterval == DISCIPLINE_TERMINATOR) {
     stop();
   } else {
     activeIntervalEnd = millis() + nextInterval * 1000;

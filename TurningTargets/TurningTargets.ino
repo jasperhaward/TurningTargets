@@ -1,25 +1,22 @@
 #include <Arduino.h>
 #include <SD.h>
 #include <Ethernet.h>
-#include "Stepper.h"
+#include "StepperMotor.h"
 #include "Discipline.h"
 #include "HttpController.h"
 
-// 2500 below results in a 5000 microsecond PWM duty cycle - a longer duty cycle reults in more torque, but slower rotation
-const int STEPPER_PULSE_DURATION = 2500;
-// 200 below results in a half motor rotation per toggle if the driver is configured for 400 steps per revolution - reducing this will reduce the angle of rotation per toggle
-const int STEPPER_STEPS_PER_TOGGLE = 200;
-
 byte mac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x0B, 0x72 };
 HttpController controller(80);
-Stepper stepper;
+// 3000 = 6000 microsecond PWM duty cycle - a longer duty cycle reults in more torque, but slower rotation
+// 100 =  45deg/quarter motor rotation per toggle if the driver is configured for 400 steps per revolution - reducing this will reduce the angle of rotation per toggle
+StepperMotor stepper(8, 7, 3000, 100);
 Discipline discipline({});
 
 void setup() {
   Serial.begin(9600);
 
   controller.setup(mac);
-  stepper.setup(8, 7, STEPPER_PULSE_DURATION, STEPPER_STEPS_PER_TOGGLE);
+  stepper.setup();
 
   delay(100);
 }
@@ -40,7 +37,7 @@ void loop() {
       Serial.println(F("START"));
 
       for (int interval : intervals) {
-        if (interval == -1) {
+        if (interval == DISCIPLINE_TERMINATOR) {
           break;
         }
         Serial.println(interval);
