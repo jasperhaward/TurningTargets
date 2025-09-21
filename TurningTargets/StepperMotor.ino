@@ -34,7 +34,7 @@ void StepperMotor::toggle() {
   }
 }
 
-void Stepper::reset() {
+void StepperMotor::reset() {
   // move stepper to start position & clockwise
   if (direction == COUNTER_CLOCKWISE) {
     toggle();

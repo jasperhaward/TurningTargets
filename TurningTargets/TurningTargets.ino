@@ -5,6 +5,8 @@
 #include "Discipline.h"
 #include "HttpController.h"
 
+extern const int DISCIPLINE_TERMINATOR;
+
 byte mac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x0B, 0x72 };
 HttpController controller(80);
 // 3000 = 6000 microsecond PWM duty cycle - a longer duty cycle reults in more torque, but slower rotation
