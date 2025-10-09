@@ -12,6 +12,7 @@ import { useInputs } from "../hooks";
  * Returns false for: 0 , 123,
  */
 const INTERVALS_REGEX = /^[1-9][0-9]*(,[1-9][0-9]*)*$/;
+const MAX_INTERVAL_LENGTH = 300;
 
 interface NewDisciplineViewProps {
   disciplines: Discipline[];
@@ -38,8 +39,8 @@ export default function NewDisciplineView({
     ? inputs.intervals.split(",").map(parseFloat)
     : [];
 
-  const isIntervalsLessThan300 = !parsedIntervals.find(
-    (interval) => interval > 300
+  const isIntervalsLessThanMax = !parsedIntervals.find(
+    (interval) => interval > MAX_INTERVAL_LENGTH
   );
 
   const isFormValid =
@@ -47,7 +48,7 @@ export default function NewDisciplineView({
     inputs.name !== "" &&
     isIntervalsCommaSeparatedIntegers &&
     isIntervalsEvenNumberOfCommas &&
-    isIntervalsLessThan300;
+    isIntervalsLessThanMax;
 
   async function onSaveClick() {
     try {
