@@ -9,7 +9,7 @@ Discipline::Discipline(int* intervals): intervals(intervals) {
 void Discipline::start() {
   isActive = true;
   activeIntervalIndex = 0;
-  activeIntervalEnd = millis() + intervals[activeIntervalIndex] * 1000;
+  activeIntervalEnd = millis() + intervals[activeIntervalIndex] * 1000UL;
 }
 
 void Discipline::stop() {
